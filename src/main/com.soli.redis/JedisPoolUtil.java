@@ -7,7 +7,7 @@ import redis.clients.jedis.JedisPoolConfig;
 /**
  * Created by solitude on 2017/4/12.
  *
- * 测试redis连接池
+ * redis工具类
  */
 public class JedisPoolUtil {
     private static volatile JedisPool jedisPool;
