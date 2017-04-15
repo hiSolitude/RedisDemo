@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!--
+        一个阶段内不需要频繁书写一个参数的值，而在不同阶段间又可以方便的切换参数配置信息
+        spring3中提供了一种简便的方式就是context:property-placeholder/元素
+    -->
+    <context:property-placeholder location="redis.properties" />
+
+    <!--redis数据库连接池-->
+    <bean id="poolConfig" class="redis.clients.jedis.JedisPoolConfig">
+        <property name="maxIdle" value="${redis.maxIdle}" />
+        <property name="maxWaitMillis" value="${redis.maxWaitMillis}" />
+        <property name="maxTotal" value="${redis.maxTotal}" />
+        <property name="testOnBorrow" value="${redis.testOnBorrow}" />
+    </bean>
+
+    <!--spring连接redis工厂-->
+    <bean id="connectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory"
+        p:hostName="${redis.host}" p:port="${redis.port}" p:poolConfig-ref="poolConfig"
+    />
+
+    <!--redisTemplate 类似JDBCTemplate-->
+    <bean id="redisTemplate" class="org.springframework.data.redis.core.StringRedisTemplate">
+        <property name="connectionFactory" ref="connectionFactory"/>
+    </bean>
+
+    <!--测试Dao-->
+    <bean id="UserDao" class="com.soli.spring_redis.dao.impl.UserDao" />
+</beans>
